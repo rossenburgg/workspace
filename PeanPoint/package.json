@@ -28,7 +28,7 @@
     "expo-dev-client": "~3.3.11",
     "expo-location": "~16.5.5",
     "expo-status-bar": "~1.11.1",
-    "express": "^4.19.1",
+    "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.3",
     "react": "18.2.0",

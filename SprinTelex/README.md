@@ -1,34 +1,32 @@
 # SprinTelex
 
-SprinTelex is an innovative messaging application designed to facilitate communication between users. It prioritizes user privacy, security, and ease of use while introducing innovative features such as "Reels" for sharing short video clips and user verification badges to enhance the user experience.
+SprinTelex is a mobile application developed using React Native and Expo, designed to offer users an engaging experience by allowing them to sign up, log in, and navigate a main page showcasing video content similar to TikTok's reels. It features a bottom navigation bar for easy access to the reels page and the user's profile settings.
 
 ## Overview
 
-SprinTelex leverages React Native Expo for the frontend, providing a seamless cross-platform user experience. The backend is powered by Node.js and Express, with MongoDB as the database for storing user information, messages, and video clips. Security is a top priority, with JWT for authentication and bcrypt for password hashing. The app's architecture is designed for scalability and robustness, ensuring a smooth and secure user experience.
+The application leverages React Native for cross-platform mobile development and Expo for rapid development and easy deployment. The architecture is designed to be scalable and maintainable, with a focus on user experience (UX) and security. The project structure includes client-side code for the mobile app and server-side code for authentication and user management.
 
 ## Features
 
-- **User Authentication and Verification**: Users can register and verify their accounts using email or phone number.
-- **Messaging**: Users can send text, images, videos, documents, and voice messages privately or in groups.
-- **Reels**: Users can create, edit, and share short video clips with their followers.
-- **User Profile**: Customizable user profiles with options for privacy settings and account management.
-- **Security**: End-to-end encryption for messages and two-factor authentication for enhanced security.
+- **Authentication:** Users can sign up for a new account or log in to an existing one.
+- **Main Page (Reels Page):** Users can scroll through and interact with video content.
+- **Profile Page (Settings):** Displays user information and allows for various profile settings adjustments.
+- **Bottom Navigation:** Easy navigation between the reels page and profile settings.
+- **Security:** Implements secure authentication mechanisms and practices.
 
 ## Getting started
 
 ### Requirements
 
 - Node.js
+- Expo CLI
 - MongoDB
-- React Native Expo
 
 ### Quickstart
 
-1. Clone the project repository.
-2. Install dependencies by running `npm install` in both the project root and the `backend` directory.
-3. Set up your MongoDB database and update the `.env.local` file in the `backend/config` directory with your database URI.
-4. Start the backend server by running `npm start` in the `backend` directory.
-5. Start the React Native app by running `npm start` in the project root directory.
+1. Install dependencies: `npm install`
+2. Start the server: `npm run server`
+3. Run the app: `npm start`
 
 ### License
 

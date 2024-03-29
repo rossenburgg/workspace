@@ -1,12 +1,19 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, AppRegistry } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Navigation from './src/navigation/AppNavigation';
+import { AuthProvider } from './src/context/AuthContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-export default function App() {
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Navigation />
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <GestureHandlerRootView style={styles.container}>
+        <AuthProvider>
+          <Navigation />
+        </AuthProvider>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 }
 
@@ -15,4 +22,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  safeArea: {
+    flex: 1,
+  },
 });
+
+AppRegistry.registerComponent('SprinTelex', () => App);
+export default App;

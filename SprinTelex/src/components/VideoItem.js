@@ -1,10 +1,14 @@
-import React, { useContext, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Text } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Text, Alert } from 'react-native';
 import { Video } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
 import { TapGestureHandler, State } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, runOnJS } from 'react-native-reanimated';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused to determine if the screen is focused
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { REACT_APP_SERVER_URL } from '@env';
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,10 +17,11 @@ const VideoItem = ({ video, play, onPlaybackStatusUpdate, shouldLoad, username, 
   const isPlaying = useSharedValue(play);
   const likeOpacity = useSharedValue(0);
   const tabBarHeight = useBottomTabBarHeight();
+  const isFocused = useIsFocused(); // Use useIsFocused to check if the ReelsScreen is currently focused
 
   useEffect(() => {
-    isPlaying.value = play;
-  }, [play]);
+    isPlaying.value = play && isFocused; // Update to play only if the screen is focused
+  }, [play, isFocused]);
 
   const likeAnimationStyle = useAnimatedStyle(() => {
     return {
@@ -33,7 +38,7 @@ const VideoItem = ({ video, play, onPlaybackStatusUpdate, shouldLoad, username, 
     setTimeout(() => {
       likeOpacity.value = 0;
     }, 1000);
-    console.log(`Video ID: ${video.id}, Liked: ${liked.value}`);
+    handleLikePress(); // Call the like function when double tapped
   };
 
   const onSingleTap = ({ nativeEvent }) => {
@@ -43,14 +48,30 @@ const VideoItem = ({ video, play, onPlaybackStatusUpdate, shouldLoad, username, 
     }
   };
 
+  const handleLikePress = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await axios.post(`${REACT_APP_SERVER_URL}/api/reels/interact/like`, 
+        { reelId: video.id }, // Assuming video.id is the ID of the reel
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log('Like status updated for reel:', video.id);
+      // Update the UI based on the new like status
+      // This may involve setting a new state or refetching reel data
+    } catch (error) {
+      console.error('Error liking reel:', error);
+      Alert.alert('Error', 'Failed to update like status.');
+    }
+  };
+
   return (
     <TapGestureHandler onHandlerStateChange={onSingleTap} numberOfTaps={1}>
       <TapGestureHandler onHandlerStateChange={onDoubleTap} numberOfTaps={2}>
         <View style={styles.container}>
-          {shouldLoad ? (
+          {shouldLoad && isFocused ? ( // Conditional rendering based on isFocused
             <Video
               source={{ uri: video.uri }}
-              style={[styles.video, { height: height - tabBarHeight }]}
+              style={[styles.video, { height: height - tabBarHeight - 50, width: width }]} // Adjusted to full screen height excluding bottom navigation and adjusted for tabBarHeight
               resizeMode="cover"
               isLooping
               shouldPlay={isPlaying.value}
@@ -59,13 +80,13 @@ const VideoItem = ({ video, play, onPlaybackStatusUpdate, shouldLoad, username, 
               onError={(e) => console.error("Video playback error:", e)}
             />
           ) : (
-            <Image source={require('../../assets/icon.png')} style={[styles.video, { height: height - tabBarHeight }]} />
+            <Image source={require('../../assets/icon.png')} style={[styles.video, { height: height - tabBarHeight - 50, width: width }]} />
           )}
           <Animated.View style={[styles.likeAnimationContainer, likeAnimationStyle]}>
             <Ionicons name="heart" size={100} color="white" />
           </Animated.View>
           <View style={styles.interactions}>
-            <TouchableOpacity onPress={() => liked.value = !liked.value} style={styles.icon}>
+            <TouchableOpacity onPress={handleLikePress} style={styles.icon}>
               <Ionicons name={liked.value ? 'heart' : 'heart-outline'} size={30} color="white" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => console.log('Commented on video ID:', video.id)} style={styles.icon}>
@@ -93,6 +114,7 @@ const styles = StyleSheet.create({
     width: width,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff', // Default background color
   },
   video: {
     width: '100%',
@@ -133,12 +155,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   username: {
-    color: 'white',
     fontWeight: 'bold',
+    color: '#000', // Default text color
   },
   caption: {
-    color: 'white',
     fontStyle: 'italic',
+    color: '#000', // Default text color
   },
 });
 

@@ -85,14 +85,17 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   noPostsText: {
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
+    color: '#000',
   },
   postContainer: {
     alignItems: 'center',

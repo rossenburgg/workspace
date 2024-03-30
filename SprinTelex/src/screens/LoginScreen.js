@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
@@ -26,10 +26,10 @@ const LoginScreen = () => {
       }
       await AsyncStorage.setItem('userToken', data.token);
       console.log('Login successful for email:', email);
-      // Navigate to BottomTabNavigator after successful login
       navigation.navigate('Reels');
     } catch (error) {
       console.error('Login failed:', error.message, error.stack);
+      Alert.alert('Login Failed', 'Please check your credentials and try again.');
     }
   };
 

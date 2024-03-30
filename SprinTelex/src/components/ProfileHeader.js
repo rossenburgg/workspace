@@ -60,6 +60,7 @@ const ProfileHeader = ({ username, profilePictureUrl, isVerified, followersCount
       flexDirection: 'row',
       padding: 10,
       alignItems: 'center',
+      backgroundColor: '#fff',
     },
     profilePic: {
       width: width * 0.2,
@@ -78,6 +79,7 @@ const ProfileHeader = ({ username, profilePictureUrl, isVerified, followersCount
       fontWeight: 'bold',
       fontSize: width * 0.05,
       marginRight: 5,
+      color: '#000',
     },
     statsContainer: {
       flexDirection: 'row',
@@ -86,9 +88,11 @@ const ProfileHeader = ({ username, profilePictureUrl, isVerified, followersCount
     },
     statsText: {
       fontSize: width * 0.04,
+      color: '#000',
     },
     statsNumber: {
       fontWeight: 'bold',
+      color: '#000',
     },
   });
 

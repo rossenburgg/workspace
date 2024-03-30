@@ -17,6 +17,7 @@ const AuthProvider = ({ children }) => {
         setToken(userToken);
       } catch (e) {
         console.error('Error retrieving token from storage:', e.message, e.stack);
+        // Handle error appropriately based on application's error handling strategy
       }
     };
 
@@ -37,6 +38,7 @@ const AuthProvider = ({ children }) => {
         setToken(newToken);
       } catch (e) {
         console.error('Error setting token in storage:', e.message, e.stack);
+        // Handle error appropriately based on application's error handling strategy
       }
     },
   };

@@ -1,12 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Button, Alert, View } from 'react-native'; // Import SafeAreaView
-import UploadModal from '../components/UploadModal';
+import { SafeAreaView, Button, Alert, View, ActivityIndicator } from 'react-native'; // Import SafeAreaView
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
 const UploadScreen = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const modalRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -19,19 +17,25 @@ const UploadScreen = () => {
     verifyToken();
   }, [navigation]);
 
-  const handleOpenModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
+  const handleUpload = async () => {
+    setUploading(true);
+    console.log("Starting upload simulation");
+    // Simulate a network request delay
+    setTimeout(() => {
+      setUploading(false);
+      console.log("Upload simulation completed");
+      Alert.alert('Upload Status', 'Upload simulated successfully!');
+    }, 2000);
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}> 
-        <Button title="Upload Reel" onPress={handleOpenModal} />
-        {isModalVisible && <UploadModal ref={modalRef} onClose={handleCloseModal} />}
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        {uploading ? (
+          <ActivityIndicator size="large" />
+        ) : (
+          <Button title="Upload Reel" onPress={handleUpload} />
+        )}
       </View>
     </SafeAreaView>
   );

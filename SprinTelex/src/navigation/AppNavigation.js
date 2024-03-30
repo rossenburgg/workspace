@@ -1,50 +1,49 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import AuthStack from './AuthStack';
 import BottomTabNavigator from './BottomTabNavigator';
 import { AuthContext } from '../context/AuthContext';
+import { REACT_APP_SERVER_URL } from '@env'; 
 
 const AppNavigation = () => {
-  const context = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem('userToken');
-        if (storedToken) {
-          console.log('User is logged in');
-          context.setToken(storedToken);
-        } else {
-          console.log('User is not logged in');
-          context.setToken(null);
+    const checkAuthStatus = async () => {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        try {
+          const response = await axios.get(`${REACT_APP_SERVER_URL}/api/auth/check`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (response.data.isAuthenticated) {
+            authContext.setToken(token);
+          } else {
+            authContext.setToken(null);
+          }
+        } catch (error) {
+          console.error('Error checking authentication status:', error.message, error.stack);
+          authContext.setToken(null);
         }
-      } catch (error) {
-        console.error('Error checking login status:', error.message, error.stack);
+      } else {
+        authContext.setToken(null);
       }
+      setLoading(false);
     };
 
-    checkLoginStatus();
-  }, [context.setToken]);
+    checkAuthStatus();
+  }, [authContext]);
 
-  if (context.token === undefined) {
-    console.log('Token is undefined, waiting for authentication status check.');
-    return null; // or some fallback UI
+  if (loading) {
+    return null; // or a loading spinner
   }
 
   return (
     <NavigationContainer>
-      {context.token ? (
-        <>
-          {console.log('User is authenticated: Navigating to BottomTabNavigator.')}
-          <BottomTabNavigator />
-        </>
-      ) : (
-        <>
-          {console.log('User is not authenticated: Navigating to AuthStack.')}
-          <AuthStack />
-        </>
-      )}
+      {authContext.token ? <BottomTabNavigator /> : <AuthStack />}
     </NavigationContainer>
   );
 };

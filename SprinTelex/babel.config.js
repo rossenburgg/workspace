@@ -9,7 +9,7 @@ module.exports = function(api) {
         }
       }],
       'module:react-native-dotenv',
-      'react-native-reanimated/plugin',
+      'react-native-reanimated/plugin', // This plugin is necessary for Reanimated v2 which requires special setup for Hermes
     ],
   };
 };

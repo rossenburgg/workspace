@@ -1,14 +1,14 @@
 import React, { forwardRef, useState, useMemo, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, Alert, ActivityIndicator } from 'react-native';
 import BottomSheet, { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { REACT_APP_SERVER_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
+import { uploadVideo, saveVideoMetadata } from '../services/firebaseService'; // Import the uploadVideo and saveVideoMetadata functions
 
 const UploadModal = forwardRef((props, ref) => {
   const [caption, setCaption] = useState('');
-  const [video, setVideo] = useState(null);
+  const [videoUri, setVideoUri] = useState(null);
   const [uploading, setUploading] = useState(false);
   const snapPoints = useMemo(() => ['25%', '50%'], []);
   const navigation = useNavigation();
@@ -33,12 +33,12 @@ const UploadModal = forwardRef((props, ref) => {
 
     if (!result.cancelled) {
       console.log('Video picked for upload:', result.uri); // Logging video selection
-      setVideo(result.uri);
+      setVideoUri(result.uri);
     }
   };
 
-  const uploadVideo = async () => {
-    if (!video || !caption) {
+  const handleUpload = async () => {
+    if (!videoUri || !caption) {
       Alert.alert("Error", "Both video and caption are required for upload");
       return;
     }
@@ -46,75 +46,68 @@ const UploadModal = forwardRef((props, ref) => {
     setUploading(true);
     console.log('Uploading video...'); // Logging upload start
 
-    const token = await AsyncStorage.getItem('userToken');
-    const formData = new FormData();
-    formData.append('video', { uri: video, type: 'video/mp4', name: 'upload.mp4' });
-    formData.append('caption', caption);
+    const { success, url, error } = await uploadVideo(videoUri);
 
-    try {
-      const response = await fetch(`${REACT_APP_SERVER_URL}/api/reels/upload`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-        body: formData,
-      });
+    if (success) {
+      console.log('Video uploaded successfully:', url); // Logging success
+      const uploaderId = await AsyncStorage.getItem('userId'); // INPUT_REQUIRED {userId} - Ensure this is set during user authentication
+      const metadata = {
+        videoUrl: url,
+        caption: caption,
+        uploaderId: uploaderId,
+      };
 
-      const data = await response.json();
+      const saveMetadataResponse = await saveVideoMetadata(metadata);
 
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to upload video");
+      if (saveMetadataResponse.success) {
+        console.log('Video metadata saved successfully');
+        Alert.alert("Success", "Video uploaded successfully");
+      } else {
+        console.error("Metadata Save Failed", `Error: ${saveMetadataResponse.error}`);
+        Alert.alert("Upload Failed", saveMetadataResponse.error);
       }
 
-      console.log('Video uploaded successfully:', data); // Logging success
-      Alert.alert("Success", "Video uploaded successfully");
       setCaption('');
-      setVideo(null);
+      setVideoUri(null);
       ref.current?.dismiss(); // Changed from close to dismiss to correctly use BottomSheetModal method
-    } catch (error) {
-      console.error("Upload Failed", `Error: ${error.message}`, error.stack); // Logging the entire error
-      Alert.alert("Upload Failed", error.message);
-    } finally {
-      setUploading(false);
+    } else {
+      console.error("Upload Failed", `Error: ${error}`, error.stack); // Adjusted error logging
+      Alert.alert("Upload Failed", error);
     }
+    setUploading(false);
   };
 
   return (
     <BottomSheetModalProvider>
-    <View style={styles.container}>
-   
-
-      <BottomSheetModal
-        ref={ref}
-        index={-1}
-        snapPoints={snapPoints}
-        enablePanDownToClose={true}
-        onClose={() => {
-          console.log('Upload modal closed'); // Logging modal close
-          setCaption('');
-          setVideo(null);
-        }}
-      >
-        <View style={styles.contentContainer}>
-          <Text style={styles.header}>Upload a Video</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter a caption"
-            value={caption}
-            onChangeText={setCaption}
-          />
-          <Button title="Pick a video" onPress={pickVideo} />
-          {uploading ? (
-            <Text>Uploading...</Text>
-          ) : (
-            <Button title="Upload" onPress={uploadVideo} />
-          )}
-        </View>
-      </BottomSheetModal>
-
-
-    </View>
+      <View style={styles.container}>
+        <BottomSheetModal
+          ref={ref}
+          index={1}
+          snapPoints={snapPoints}
+          enablePanDownToClose={true}
+          onClose={() => {
+            console.log('Upload modal closed'); // Logging modal close
+            setCaption('');
+            setVideoUri(null);
+          }}
+        >
+          <View style={styles.contentContainer}>
+            <Text style={styles.header}>Upload a Video</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter a caption"
+              value={caption}
+              onChangeText={setCaption}
+            />
+            <Button title="Pick a video" onPress={pickVideo} />
+            {uploading ? (
+              <ActivityIndicator size="large" />
+            ) : (
+              <Button title="Upload" onPress={handleUpload} />
+            )}
+          </View>
+        </BottomSheetModal>
+      </View>
     </BottomSheetModalProvider>
   );
 });
@@ -140,6 +133,8 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '90%',
     borderRadius: 10,
+    borderColor: '#ccc',
+    backgroundColor: '#fff',
   },
 });
 

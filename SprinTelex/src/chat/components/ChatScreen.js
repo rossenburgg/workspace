@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
+  const [userId, setUserId] = useState('');
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -26,24 +27,24 @@ const ChatScreen = () => {
     initChat();
   }, [navigation]);
 
+  useEffect(() => {
+    const getUserId = async () => {
+      const userId = await AsyncStorage.getItem('userID');
+      if (userId) {
+        setUserId(userId);
+      } else {
+        Alert.alert('Error', 'Failed to retrieve user ID.');
+      }
+    };
+
+    getUserId();
+  }, []);
+
   const onSend = useCallback(async (newMessages = []) => {
     setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
     // Placeholder for sending a message logic
     console.log('Sending message:', newMessages[0].text); // Log the message being sent
     // Assuming the logic to send messages will be implemented here
-  }, []);
-
-  useEffect(() => {
-    const getUserId = async () => {
-      const userId = await AsyncStorage.getItem('userID');
-      return userId;
-    };
-
-    getUserId().then((userId) => {
-      if (!userId) {
-        Alert.alert('Error', 'Failed to retrieve user ID.');
-      }
-    });
   }, []);
 
   return (
@@ -52,7 +53,7 @@ const ChatScreen = () => {
         messages={messages}
         onSend={(messages) => onSend(messages)}
         user={{
-          _id: AsyncStorage.getItem('userID'), // This needs to be replaced with a state that holds the user ID
+          _id: userId, // Use the state here
         }}
         showUserAvatar={true}
         alwaysShowSend={true}

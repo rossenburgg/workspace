@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import ReelsScreen from '../screens/ReelsScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import UserProfileScreen from '../screens/UserProfileScreen'; // Corrected import for UserProfileScreen
 import UploadScreen from '../screens/UploadScreen';
 import ChatScreen from '../chat/components/ChatScreen';
 import SearchScreen from '../screens/SearchScreen'; // Importing the new SearchScreen
@@ -38,7 +38,7 @@ const BottomTabNavigator = () => {
       })}
     >
       <Tab.Screen name="Reels" component={ReelsScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile', headerShown: false}}  /> 
+      <Tab.Screen name="Profile" component={UserProfileScreen} options={{ title: 'Profile', headerShown: false}}  /> 
       <Tab.Screen name="Upload" component={UploadScreen} options={{ title: 'Upload' }} />
       <Tab.Screen name="Chat" component={ChatScreen} options={{ headerShown: false, title: 'Chat' }} />
       <Tab.Screen name="Search" component={SearchScreen} options={{ headerShown: false, title: 'Search' }} />

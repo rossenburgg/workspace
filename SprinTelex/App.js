@@ -1,28 +1,32 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, AppRegistry } from 'react-native';
+import { StyleSheet, StatusBar, AppRegistry } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Navigation from './src/navigation/AppNavigation';
 import { AuthProvider } from './src/context/AuthContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+const ThemedStatusBar = () => {
+  return (
+    <StatusBar />
+  );
+};
 
 const App = () => {
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaProvider>
       <GestureHandlerRootView style={styles.container}>
         <AuthProvider>
+          <ThemedStatusBar /> 
           <Navigation />
         </AuthProvider>
       </GestureHandlerRootView>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  safeArea: {
     flex: 1,
   },
 });

@@ -1,92 +1,76 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, FlatList, Dimensions, Text, Alert } from 'react-native';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, Dimensions, SafeAreaView, StyleSheet, Alert } from 'react-native';
 import VideoItem from '../components/VideoItem';
-import useVideoPlayState from '../hooks/useVideoPlayState';
 import axios from 'axios';
-import { REACT_APP_SERVER_URL } from '@env'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ReelsScreen = () => {
-  const flatListRef = useRef();
-  const [viewableItems, setViewableItems] = useState([]);
-  const [videos, setVideos] = useState([]); // State to hold videos fetched from backend
-  const activeVideoId = useVideoPlayState(viewableItems);
-  const screenHeight = Dimensions.get('window').height;
-  const tabBarHeight = useBottomTabBarHeight();
+  const [videos, setVideos] = useState([]);
 
   useEffect(() => {
-    const fetchVideos = async () => {
+    const fetchReels = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
-          console.error('No token found, unauthorized access attempt.');
-          Alert.alert('Unauthorized', 'You must be logged in to view videos.');
+          console.log('No token found, unauthorized access attempt.');
+          Alert.alert('Error', 'You must be logged in to view reels.');
           return;
         }
-        const response = await axios.get(`${REACT_APP_SERVER_URL}/api/reels`, {
+        const response = await axios.get('http://192.168.8.130:8080/api/reels/feed', { 
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (response.data && Array.isArray(response.data.videos)) {
-          setVideos(response.data.videos.map(video => ({
-            ...video,
-            id: video._id, // Ensure each video item has an 'id' field for the FlatList keyExtractor
-          })));
-        } else {
-          console.error('Error fetching videos: Invalid response format');
-          Alert.alert('Error', 'Failed to fetch videos. Please check the server response format.');
-        }
+        setVideos(response.data.reels);
       } catch (error) {
-        console.error('Error fetching videos:', error.message, error.stack);
-        Alert.alert('Error', 'Failed to fetch videos. Please try again later.');
+        console.error('Error fetching reels:', error.message, error.stack);
+        Alert.alert('Error', 'Failed to fetch reels. Please try again later.');
       }
     };
 
-    fetchVideos();
+    fetchReels();
   }, []);
 
-  const renderItem = ({ item, index }) => (
+  const renderItem = ({ item }) => (
     <VideoItem
       video={item}
-      play={index === activeVideoId}
-      shouldLoad={viewableItems.includes(item.id)} // Dynamically set based on onViewableItemsChanged logic
-      onPlaybackStatusUpdate={(status, id) => console.log(`Playback status updated for video ${id}:`, status)}
-      username={item.uploader.username} // Assuming the video item includes uploader details
-      profilePictureUrl={item.uploader.profilePictureUrl} // Assuming the video item includes uploader details
-      caption={item.caption} // Assuming the video item includes a caption
+      play={item.shouldPlay}
+      shouldLoad={item.shouldPlay}
+      username={item.uploader.username} // Assuming the API response includes these details
+      profilePictureUrl={item.uploader.profilePictureUrl}
+      caption={item.caption}
     />
   );
 
-  const onViewableItemsChanged = ({ viewableItems }) => {
-    console.log("Viewable items:", viewableItems.map(item => item.key));
-    setViewableItems(viewableItems.map(item => item.key));
-  };
-
   return (
-    <View style={{ flex: 1 }}>
-      {videos.length > 0 ? (
-        <FlatList
-          ref={flatListRef}
-          data={videos}
-          renderItem={renderItem}
-          keyExtractor={item => item.id.toString()} // Ensure keyExtractor uses string IDs
-          pagingEnabled
-          showsVerticalScrollIndicator={false}
-          onViewableItemsChanged={onViewableItemsChanged}
-          viewabilityConfig={{
-            itemVisiblePercentThreshold: 50 // Considered viewable if 50% or more is visible
-          }}
-          getItemLayout={(data, index) => (
-            {length: screenHeight - tabBarHeight, offset: (screenHeight - tabBarHeight) * index, index}
-          )}
-        />
-      ) : (
-        <Text>No videos to display</Text> // Provide feedback when there are no videos
-      )}
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <FlatList
+        data={videos}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        pagingEnabled
+        showsVerticalScrollIndicator={false}
+      />
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  videoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  video: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+});
 
 export default ReelsScreen;

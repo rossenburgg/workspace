@@ -1,18 +1,19 @@
-# SprinTelex
+de# SprinTelex
 
-SprinTelex is a dynamic mobile application developed using React Native and Expo, designed for creating, sharing, and engaging with video reels. Inspired by the engaging and interactive nature of platforms like TikTok and Instagram Reels, SprinTelex offers users an intuitive and immersive experience in video content consumption and creation.
+SprinTelex is a React Native app designed to streamline the login and registration process with email verification and Google Sign-In. It provides a user-friendly interface for authentication, profile management, and additional features enhancing the user experience.
 
 ## Overview
 
-The application architecture leverages React Native for the frontend to ensure a responsive and seamless user interface. The backend is powered by Node.js with Express.js, managing authentication, user profiles, and video reel content, with MongoDB for data storage. The project emphasizes scalability, maintainability, and a user-centered design approach, adhering to modern UI/UX principles.
+This project utilizes React Native for cross-platform mobile app development and Expo for an easier setup and development process. Authentication is handled via email/password and Google OAuth, using Firebase as the backend service. The app structure includes screens for login, password input, and user profile, managed with React Navigation for seamless flow between screens.
 
 ## Features
 
-- **User Authentication**: Secure login and registration functionality.
-- **Video Reels Page**: Users can browse, like, comment on, and share video reels in a full-screen immersive experience.
-- **Profile Management**: Users can view and edit their profile, including updating their username, profile picture, and password.
-- **Upload Functionality**: Users can upload their video reels, enhancing content generation and community engagement.
-- **Interactive User Experience**: The app uses modern UI elements and smooth navigation to enhance user interaction.
+- User authentication with email and password
+- Email verification with OTP
+- Google Sign-In integration
+- Profile creation and management
+- Navigation between different screens of the app
+- Error handling and input validation
 
 ## Getting started
 
@@ -20,14 +21,16 @@ The application architecture leverages React Native for the frontend to ensure a
 
 - Node.js
 - Expo CLI
-- MongoDB
+- React Native CLI
+- A Firebase project for backend services
 
 ### Quickstart
 
-1. Clone the repository to your local machine.
-2. Navigate to the project directory and install dependencies with `npm install`.
-3. Start the backend server with `npm run server`.
-4. Launch the app with `expo start` or `npm start`.
+1. Clone the repository.
+2. Install dependencies with `npm install`.
+3. Set up a Firebase project and configure it in `config/firebaseConfig.js`.
+4. Start the project with `expo start`.
+5. Follow the instructions in the terminal to open the app on your device or emulator.
 
 ### License
 

@@ -1,1 +1,0 @@
-// This file has been removed as per the instructions to eliminate dependencies on stream-chat-expo and focus on using react-native-gifted-chat for chat functionalities.r

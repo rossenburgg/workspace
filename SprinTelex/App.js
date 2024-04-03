@@ -1,35 +1,22 @@
 import React from 'react';
-import { StyleSheet, StatusBar, AppRegistry } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Navigation from './src/navigation/AppNavigation';
-import { AuthProvider } from './src/context/AuthContext';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LoginScreen from './screens/LoginScreen';
+import PasswordInputScreen from './screens/PasswordInputScreen'; // Import PasswordInputScreen
+import { AuthProvider } from './context/AuthContext'; // Import AuthProvider
 
-const ThemedStatusBar = () => {
-  return (
-    <StatusBar />
-  );
-};
+const Stack = createNativeStackNavigator();
 
-const App = () => {
+export default function App() {
+  console.log('App component mounted, setting up navigation with AuthProvider context.');
   return (
-    <SafeAreaProvider>
-      <GestureHandlerRootView style={styles.container}>
-        <AuthProvider>
-          <ThemedStatusBar /> 
-          <Navigation />
-        </AuthProvider>
-      </GestureHandlerRootView>
-    </SafeAreaProvider>
+    <AuthProvider> 
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="PasswordInput" component={PasswordInputScreen} options={{ title: 'Enter Password' }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-AppRegistry.registerComponent('SprinTelex', () => App);
-export default App;

@@ -7,7 +7,8 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   profilePicture: { type: String, default: '' },
   bio: { type: String, default: '' },
-  interests: { type: [String], default: [] }
+  interests: { type: [String], default: [] },
+  emailVerified: { type: Boolean, default: false } // Added field to track email verification status
 });
 
 UserSchema.pre('save', async function(next) {

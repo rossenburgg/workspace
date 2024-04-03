@@ -13,6 +13,7 @@
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
     "expo": "^50.0.14",
     "expo-status-bar": "~1.11.1",
     "express": "^4.19.2",

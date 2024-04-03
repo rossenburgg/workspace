@@ -21,3 +21,14 @@ This project is bootstrapped with Expo CLI. To run the app, ensure you have Expo
 - `jsonwebtoken`: Implements JSON Web Tokens (JWT) to securely transmit information between parties as a JSON object. This is used for secure user authentication.
 - `nodemailer`: Module for email sending. Used for sending account verification and password reset emails.
 - `socket.io`: Enables real-time, bidirectional and event-based communication between web clients and the server. Used for implementing real-time messaging features.
+
+## Environment Configuration
+
+- Create a `.env` file in the root directory of the project.
+- Add the following line, replacing `your_mongodb_connection_string_here` with your actual MongoDB connection string:
+
+```
+MONGODB_URI=your_mongodb_connection_string_here
+```
+
+- This connection string is used to connect the application to MongoDB.

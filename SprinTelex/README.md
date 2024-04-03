@@ -1,37 +1,23 @@
-de# SprinTelex
+# SprinTelex
 
-SprinTelex is a React Native app designed to streamline the login and registration process with email verification and Google Sign-In. It provides a user-friendly interface for authentication, profile management, and additional features enhancing the user experience.
+SprinTelex is a social media messaging app that focuses on real-time communication and a seamless user experience, inspired by the design and functionality of Telegram.
 
-## Overview
+## Project Structure
 
-This project utilizes React Native for cross-platform mobile app development and Expo for an easier setup and development process. Authentication is handled via email/password and Google OAuth, using Firebase as the backend service. The app structure includes screens for login, password input, and user profile, managed with React Navigation for seamless flow between screens.
+- `components`: Contains reusable UI components.
+- `screens`: Holds the different screens of the app, representing distinct views.
+- `utilities`: Includes utility functions and helpers for various features.
+- `navigation`: Organizes the navigation setup for moving between screens.
 
-## Features
+## Getting Started
 
-- User authentication with email and password
-- Email verification with OTP
-- Google Sign-In integration
-- Profile creation and management
-- Navigation between different screens of the app
-- Error handling and input validation
+This project is bootstrapped with Expo CLI. To run the app, ensure you have Expo CLI installed and execute `expo start`.
 
-## Getting started
+## Backend Dependencies
 
-### Requirements
-
-- Node.js
-- Expo CLI
-- React Native CLI
-- A Firebase project for backend services
-
-### Quickstart
-
-1. Clone the repository.
-2. Install dependencies with `npm install`.
-3. Set up a Firebase project and configure it in `config/firebaseConfig.js`.
-4. Start the project with `expo start`.
-5. Follow the instructions in the terminal to open the app on your device or emulator.
-
-### License
-
-Copyright (c) 2024.
+- `express`: Web application framework for Node.js, used for building the API and handling server-side logic.
+- `mongoose`: Object Data Modeling (ODM) library for MongoDB and Node.js. It manages relationships between data, provides schema validation, and is used to translate between objects in code and their representation in MongoDB.
+- `bcryptjs`: Library for hashing and salting passwords before storing them in the database, enhancing security.
+- `jsonwebtoken`: Implements JSON Web Tokens (JWT) to securely transmit information between parties as a JSON object. This is used for secure user authentication.
+- `nodemailer`: Module for email sending. Used for sending account verification and password reset emails.
+- `socket.io`: Enables real-time, bidirectional and event-based communication between web clients and the server. Used for implementing real-time messaging features.

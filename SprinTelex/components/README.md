@@ -1,1 +1,0 @@
-This directory contains reusable components for the SprinTelex app.

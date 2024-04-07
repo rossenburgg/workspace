@@ -1,34 +1,35 @@
 # SprinTelex
 
-SprinTelex is a social media messaging app that focuses on real-time communication and a seamless user experience, inspired by the design and functionality of Telegram.
+SprinTelex is an innovative social media application inspired by the sophisticated design and intuitive user experience of Telegram. Developed using React Native Expo, it aims to offer a seamless messaging, content browsing, and interactive features, fostering engagement in a dynamic social media landscape.
 
-## Project Structure
+## Overview
 
-- `components`: Contains reusable UI components.
-- `screens`: Holds the different screens of the app, representing distinct views.
-- `utilities`: Includes utility functions and helpers for various features.
-- `navigation`: Organizes the navigation setup for moving between screens.
+The project leverages React Native Expo for the frontend, enabling a cross-platform social media experience. The Expo navigation template provides a structured approach to app navigation, while the backend is built on Node.js and Express, with Firebase for authentication and real-time database functionalities. The app's architecture is designed to prioritize scalability, user engagement, and real-time interactions.
 
-## Getting Started
+## Features
 
-This project is bootstrapped with Expo CLI. To run the app, ensure you have Expo CLI installed and execute `expo start`.
+- Real-time messaging
+- User profile exploration and content browsing
+- Secure user authentication via Firebase
+- Push notifications for engagement
+- Multimedia support for a rich content experience
 
-## Backend Dependencies
+## Getting started
 
-- `express`: Web application framework for Node.js, used for building the API and handling server-side logic.
-- `mongoose`: Object Data Modeling (ODM) library for MongoDB and Node.js. It manages relationships between data, provides schema validation, and is used to translate between objects in code and their representation in MongoDB.
-- `bcryptjs`: Library for hashing and salting passwords before storing them in the database, enhancing security.
-- `jsonwebtoken`: Implements JSON Web Tokens (JWT) to securely transmit information between parties as a JSON object. This is used for secure user authentication.
-- `nodemailer`: Module for email sending. Used for sending account verification and password reset emails.
-- `socket.io`: Enables real-time, bidirectional and event-based communication between web clients and the server. Used for implementing real-time messaging features.
+### Requirements
 
-## Environment Configuration
+- Node.js
+- Expo CLI
+- Firebase account
 
-- Create a `.env` file in the root directory of the project.
-- Add the following line, replacing `your_mongodb_connection_string_here` with your actual MongoDB connection string:
+### Quickstart
 
-```
-MONGODB_URI=your_mongodb_connection_string_here
-```
+1. Clone the repository.
+2. Install dependencies with `npm install` in both the root and backend directories.
+3. Set up Firebase and MongoDB configurations in the `.env` file for the backend.
+4. Start the backend server with `npm run server` in the backend directory.
+5. Launch the Expo project with `expo start` in the root directory.
 
-- This connection string is used to connect the application to MongoDB.
+### License
+
+Copyright (c) 2024.

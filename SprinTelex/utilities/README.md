@@ -1,1 +1,0 @@
-This directory contains utility functions and helpers used across the SprinTelex app.

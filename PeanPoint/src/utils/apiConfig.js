@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 // Base URL for the API
-const API_BASE_URL = "http://localhost:3000/api"; // Replace with your actual API URL
+const API_BASE_URL = "http://192.168.8.130:3000/api"; // Replace with your actual API URL
 
 // Function to fetch courts based on latitude and longitude
 async function fetchCourts(latitude, longitude) {

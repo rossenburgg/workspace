@@ -1,1 +1,0 @@
-This directory organizes the navigation-related files for the SprinTelex app.

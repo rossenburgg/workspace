@@ -31,6 +31,7 @@ export const signUp = async (email, password, username) => {
 
 export const signIn = async (email, password) => {
   try {
+    console.log('Attempting to sign in with email:', email); // Log email before sending request
     const response = await axios.post(`${BASE_URL}/signin`, {
       email,
       password,
@@ -39,6 +40,7 @@ export const signIn = async (email, password) => {
         'Content-Type': 'application/json',
       },
     });
+    console.log('Sign-in response:', response); // Log response from the server
     if (response.data.token) {
       await AsyncStorage.setItem('userToken', response.data.token);
       console.log('User signed in and token stored.');
@@ -48,6 +50,7 @@ export const signIn = async (email, password) => {
     }
   } catch (error) {
     console.error('Error signing in:', error.response?.data?.message || error.message);
+    console.error('Sign-in error response:', error.response); // Log error response from the server
     console.error('Error stack:', error.stack);
     Alert.alert('Error', 'Error signing in: ' + (error.response?.data?.message || error.message));
   }

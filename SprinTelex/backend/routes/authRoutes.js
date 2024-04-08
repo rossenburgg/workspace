@@ -27,10 +27,14 @@ router.post('/signup', [
       return res.status(400).send({ message: 'Email or username already in use' });
     }
 
-    // Create new user without hashing password here, as it's handled in User model's pre-save middleware
+    // Hash password before saving the user
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create new user with hashed password
     const newUser = await User.create({
       email,
-      password, // Password will be hashed in the pre-save middleware
+      password: hashedPassword,
       username,
       profilePictureUrl,
       location,
@@ -47,6 +51,7 @@ router.post('/signup', [
     res.status(201).send({ user: newUser, token, message: 'User created successfully' });
   } catch (error) {
     console.error(`Error creating user: ${error.message}`, error);
+    console.error(error.stack);
     res.status(500).send({ message: 'Error creating user', error: error.message });
   }
 });
@@ -64,15 +69,16 @@ router.post('/signin', [
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('User not found during sign-in attempt:', email);
       return res.status(404).send({ message: 'User not found' });
     }
 
     // Validate password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log('Invalid credentials provided for email:', email);
       return res.status(401).send({ message: 'Invalid credentials' });
     }
 
@@ -83,6 +89,7 @@ router.post('/signin', [
     res.status(200).send({ token, message: 'User signed in successfully', userId: user._id.toString() });
   } catch (error) {
     console.error(`Error signing in user: ${error.message}`, error);
+    console.error(error.stack);
     res.status(500).send({ message: 'Error signing in user', error: error.message });
   }
 });

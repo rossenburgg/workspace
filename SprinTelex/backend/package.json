@@ -5,20 +5,33 @@
   "license": "MIT",
   "scripts": {
     "server": "node index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "jest"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.23.1",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^12.4.5",
     "axios": "^1.6.8",
+    "babel-plugin-inline-dotenv": "^1.7.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-validator": "^7.0.1",
+    "jest-mock-axios": "^4.7.3",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
+    "mock-async-storage": "^2.2.0",
     "mongoose": "^8.3.0",
     "multer": "^1.4.5-lts.1",
     "react-native-config": "^1.5.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.2.3"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

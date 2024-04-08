@@ -1,18 +1,18 @@
 # SprinTelex
 
-SprinTelex is an innovative social media application inspired by the sophisticated design and intuitive user experience of Telegram. Developed using React Native Expo, it aims to offer a seamless messaging, content browsing, and interactive features, fostering engagement in a dynamic social media landscape.
+SprinTelex is a cutting-edge social media application, inspired by the renowned messaging interface of Telegram. It leverages the power of React Native Expo to offer a sophisticated and intuitive user experience, focusing on seamless navigation and real-time interactions.
 
 ## Overview
 
-The project leverages React Native Expo for the frontend, enabling a cross-platform social media experience. The Expo navigation template provides a structured approach to app navigation, while the backend is built on Node.js and Express, with Firebase for authentication and real-time database functionalities. The app's architecture is designed to prioritize scalability, user engagement, and real-time interactions.
+This project is built on React Native Expo, utilizing its default Expo navigation template for structured app navigation. The backend is developed with Node.js and Express, integrating Firebase for authentication and MongoDB for data management. The app is designed to be scalable, ensuring a seamless and engaging user experience across different platforms.
 
 ## Features
 
-- Real-time messaging
+- Real-time messaging with multimedia support
 - User profile exploration and content browsing
 - Secure user authentication via Firebase
-- Push notifications for engagement
-- Multimedia support for a rich content experience
+- Robust push notification system
+- Personalized settings management
 
 ## Getting started
 
@@ -21,6 +21,7 @@ The project leverages React Native Expo for the frontend, enabling a cross-platf
 - Node.js
 - Expo CLI
 - Firebase account
+- MongoDB setup
 
 ### Quickstart
 

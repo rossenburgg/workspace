@@ -1,127 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, Button, ActivityIndicator, Alert, FlatList, TouchableOpacity, Text, View } from 'react-native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, Alert, StyleSheet, Button } from 'react-native';
+import fetchUserProfile from '../utils/fetchUserProfile'; // Adjust the import path as necessary
 import { useNavigation } from '@react-navigation/native';
-import ProfileHeader from '@/components/ProfileHeader'; // Import the ProfileHeader component
 
 const ProfileScreen = () => {
-  const [userProfile, setUserProfile] = useState({ username: '', email: '', profilePictureUrl: '', followers: [], following: [], location: '', bio: '' });
-  const [followersDetails, setFollowersDetails] = useState([]);
-  const [followingDetails, setFollowingDetails] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const fetchUserProfile = async () => {
-    setLoading(true);
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
-        setError('You are not authenticated. Please log in.');
-        setLoading(false);
-        return;
-      }
-      const response = await axios.get(`http://192.168.8.130:3000/api/users/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log('User profile data:', response.data);
-      setUserProfile(response.data);
-      fetchUserLists(response.data.followers, response.data.following);
-      setError('');
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      console.error(error.message);
-      if (error.response && error.response.status === 404) {
-        setError('No user profile found. Please complete your profile setup.');
-      } else {
-        setError('Failed to fetch user profile. Please try again later.');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchUserLists = async (followers, following) => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      const followersResponse = await axios.get(`http://192.168.8.130:3000/api/users/details`, {
-        params: { userIds: followers.join(',') },
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setFollowersDetails(followersResponse.data);
-
-      const followingResponse = await axios.get(`http://192.168.8.130:3000/api/users/details`, {
-        params: { userIds: following.join(',') },
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setFollowingDetails(followingResponse.data);
-    } catch (error) {
-      console.error('Error fetching user lists:', error);
-      console.error(error.message);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await AsyncStorage.removeItem('userToken');
-      console.log('User signed out successfully');
-      navigation.navigate('SigninScreen');
-    } catch (error) {
-      console.error('Error signing out:', error);
-      console.error(error.message);
-      Alert.alert('Error', 'Failed to sign out.');
-    }
-  };
-
   useEffect(() => {
-    fetchUserProfile();
+    const getUserProfile = async () => {
+      try {
+        const profileData = await fetchUserProfile();
+        setUserProfile(profileData);
+        setError('');
+      } catch (err) {
+        console.error('Error fetching user profile:', err);
+        setError('Failed to fetch profile data');
+        // Error handling for authentication token issues
+        if (err.message.includes('Authentication token not found') || err.response?.status === 401) {
+          Alert.alert('Unauthorized', 'You are not authorized. Please login again.');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getUserProfile();
   }, []);
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" style={styles.loader} />;
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {loading ? (
-        <ActivityIndicator size="large" />
-      ) : error ? (
-        <>
-          <Text style={styles.error}>{error}</Text>
-          <Button title="Refresh Profile" onPress={fetchUserProfile} />
-        </>
+      {userProfile ? (
+        <View>
+          <Text style={styles.profileText}>Username: {userProfile.username}</Text>
+          {userProfile.location && <Text style={styles.profileText}>Location: {userProfile.location}</Text>}
+          {userProfile.bio && <Text style={styles.profileText}>Bio: {userProfile.bio}</Text>}
+          <Button
+            title="Edit Profile"
+            onPress={() => navigation.navigate('ProfileEditScreen', {
+              username: userProfile.username,
+              location: userProfile.location,
+              bio: userProfile.bio,
+            })}
+          />
+        </View>
       ) : (
-        <>
-          <ProfileHeader
-            profilePictureUrl={userProfile.profilePictureUrl}
-            username={userProfile.username}
-            followersCount={followersDetails.length}
-            followingCount={followingDetails.length}
-          />
-          <Text>Location: {userProfile.location}</Text>
-          <Text>Bio: {userProfile.bio}</Text>
-          <Text style={styles.listTitle}>Followers:</Text>
-          <FlatList
-            data={followersDetails}
-            keyExtractor={item => item._id}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { userId: item._id })}>
-                <Image source={{ uri: item.profilePictureUrl || 'default_image_url' }} style={styles.profilePic} />
-                <Text>{item.username}</Text>
-              </TouchableOpacity>
-            )}
-          />
-          <Text style={styles.listTitle}>Following:</Text>
-          <FlatList
-            data={followingDetails}
-            keyExtractor={item => item._id}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { userId: item._id })}>
-                <Image source={{ uri: item.profilePictureUrl || 'default_image_url' }} style={styles.profilePic} />
-                <Text>{item.username}</Text>
-              </TouchableOpacity>
-            )}
-          />
-          <Button title="Edit Profile" onPress={() => console.log('Edit Profile Pressed')} />
-          <Button title="Sign Out" onPress={handleSignOut} />
-        </>
+        <Text style={styles.profileText}>No user profile found. Please complete your profile setup.</Text>
       )}
     </View>
   );
@@ -130,35 +68,18 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  loader: {
+    marginTop: 20,
   },
-  profilePic: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 8,
-  },
-  infoContainer: {
-    marginBottom: 20,
-  },
-  infoText: {
-    fontSize: 18,
-  },
-  error: {
+  errorText: {
     color: 'red',
-    fontSize: 16,
-    marginBottom: 10,
   },
-  listTitle: {
-    fontSize: 20,
-    marginTop: 10,
-    marginBottom: 5,
+  profileText: {
+    fontSize: 16,
+    marginVertical: 5,
   },
 });
 

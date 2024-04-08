@@ -20,6 +20,7 @@ router.get('/search', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error searching for users:', error);
     console.error(error.message);
+    console.error(error.stack);
     res.status(500).send({ message: 'Error searching for users', error: error.message });
   }
 });
@@ -57,6 +58,7 @@ router.post('/follow/:userId', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error following user:', error);
     console.error(error.message);
+    console.error(error.stack);
     res.status(500).send({ message: 'Error following user', error: error.message });
   }
 });
@@ -72,7 +74,27 @@ router.get('/users/details', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error fetching users:', error);
     console.error(error.message);
+    console.error(error.stack);
     res.status(500).send({ message: 'Error fetching users', error: error.message });
+  }
+});
+
+// GET endpoint to fetch user profile
+router.get('/profile', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id; // Assuming authMiddleware sets req.user
+    const userProfile = await User.findById(userId, '-password'); // Exclude password from the result
+    if (!userProfile) {
+      console.log('No user profile found for ID:', userId); // Adjusted log message for clarity
+      return res.status(404).json({ message: 'User profile not found' });
+    }
+    console.log('User profile fetched successfully for ID:', userId); // Added success log
+    res.json(userProfile);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    console.error(error.message);
+    console.error(error.stack);
+    res.status(500).json({ message: 'Error fetching user profile', error: error.message });
   }
 });
 
@@ -98,6 +120,7 @@ router.patch('/users/:userId', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error updating user profile:', error);
     console.error(error.message);
+    console.error(error.stack);
     res.status(500).send({ message: 'Error updating user profile', error: error.message });
   }
 });

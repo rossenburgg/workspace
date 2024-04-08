@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { TextInput, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { TextInput, Button, StyleSheet, Alert, ActivityIndicator, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Text, View } from '@/components/Themed';
+import { Text } from '@/components/Themed';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { REACT_NATIVE_BACKEND_URL } from '@env'; // Import backend URL from environment variables
@@ -25,8 +25,12 @@ const SigninScreen = () => {
       }
     } catch (error) {
       console.error('Error signing in user:', error);
-      console.error('Error details:', error.message, error.stack);
-      Alert.alert('Error', 'Failed to sign in. Please check your credentials.');
+      let errorMessage = 'Failed to sign in. Please check your credentials.';
+      // Check if the error response has data and a message
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message;
+      }
+      Alert.alert('Error', errorMessage);
     } finally {
       setLoading(false);
     }

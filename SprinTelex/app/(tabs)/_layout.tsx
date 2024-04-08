@@ -33,7 +33,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: 'Home',
+          headerTitle: '',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Link href="/NotificationsScreen" asChild>
@@ -49,6 +50,21 @@ export default function TabLayout() {
               </Pressable>
             </Link>
           ),
+          headerLeft: () => (
+            <Link href="/NotificationsScreen" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="reddit"
+                    size={25}
+                    color={Colors[colorScheme ?? 'light'].text}
+                    style={{ marginLeft: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+          
         }}
       />
       <Tabs.Screen

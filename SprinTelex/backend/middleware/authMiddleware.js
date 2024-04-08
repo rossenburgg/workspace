@@ -19,8 +19,8 @@ const authMiddleware = async (req, res, next) => {
         console.log('User not found with ID from token');
         return res.status(404).send('User not found');
       }
-      req.user = user;
-      console.log('User authenticated with ID:', user.id);
+      req.user = { _id: user._id }; // Adjusted to correctly attach only the user's MongoDB '_id' to the request object
+      console.log('User authenticated with ID:', user._id); // Adjusted to correctly log MongoDB '_id'
     } catch (jwtError) {
       console.error('JWT verification error:', jwtError);
       console.error(jwtError.message);

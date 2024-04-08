@@ -1,29 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, TextInput, Button, View, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import axios from 'axios'; // Use axios for HTTP requests
-import AsyncStorage from '@react-native-async-storage/async-storage'; // For storing the JWT token
+import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileEditScreen = () => {
-  const [location, setLocation] = useState('');
-  const [bio, setBio] = useState('');
   const navigation = useNavigation();
+  const route = useRoute(); // Use the useRoute hook to access the current route and its parameters
+
+  // Set initial form states using route parameters
+  const [username, setUsername] = useState(route.params?.username || '');
+  const [location, setLocation] = useState(route.params?.location || '');
+  const [bio, setBio] = useState(route.params?.bio || '');
 
   const handleUpdateProfile = async () => {
     try {
-      const token = await AsyncStorage.getItem('userToken'); // Retrieve the JWT token from AsyncStorage
+      const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         throw new Error('User token not found. Please log in again.');
       }
-      await axios.patch(`http://<YOUR_BACKEND_URL>/api/users/profile`, // Replace <YOUR_BACKEND_URL> with the actual backend URL
-        { location, bio },
+      await axios.patch(`${process.env.REACT_NATIVE_BACKEND_URL}/api/users/${route.params?.userId}`, // Use the userId from route parameters
+        { username, location, bio },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log('Profile update request sent', { location, bio }); // Logging the profile update request
       Alert.alert('Success', 'Profile updated successfully');
       navigation.goBack();
     } catch (error) {
@@ -35,6 +38,12 @@ const ProfileEditScreen = () => {
 
   return (
     <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+      />
       <TextInput
         style={styles.input}
         placeholder="Location"

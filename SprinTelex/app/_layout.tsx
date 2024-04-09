@@ -1,37 +1,39 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { AuthProvider } from './context/AuthContext';
-import ErrorBoundary from '../components/ErrorBoundary';
-import LoadingFallback from '../components/LoadingFallback';
 
-const ModalScreen = lazy(() => import('./modal'));
-const SettingsModalScreen = lazy(() => import('./settingsModal'));
-const NotificationsScreen = lazy(() => import('./NotificationsScreen'));
-const SigninScreen = lazy(() => import('./SigninScreen'));
-const SignupScreen = lazy(() => import('./SignupScreen'));
-const SearchScreen = lazy(() => import('./SearchScreen'));
-const ProfileEditScreen = lazy(() => import('./ProfileEditScreen'));
+export {
+  // Catch any errors thrown by the Layout component.
+  ErrorBoundary,
+} from 'expo-router';
 
-const Stack = createNativeStackNavigator();
+export const unstable_settings = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: '(tabs)',
+};
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    'FontAwesome': require('@expo/vector-icons/FontAwesome').font,
+    ...FontAwesome.font,
   });
 
+  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
-    if (!loaded) {
-      SplashScreen.preventAutoHideAsync();
-    } else {
+    if (error) throw error;
+  }, [error]);
+
+  useEffect(() => {
+    if (loaded) {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
@@ -40,25 +42,26 @@ export default function RootLayout() {
     return null;
   }
 
+  return <RootLayoutNav />;
+}
+
+function RootLayoutNav() {
+  const colorScheme = useColorScheme();
+
   return (
-    <ErrorBoundary>
-      <AuthProvider>
-        <ThemeProvider value={useColorScheme() === 'dark' ? DarkTheme : DefaultTheme}>
-          <NavigationContainer>
-            <Suspense fallback={<LoadingFallback />}>
-              <Stack.Navigator>
-                <Stack.Screen name="modal" component={ModalScreen} options={{ presentation: 'modal' }} />
-                <Stack.Screen name="settingsModal" component={SettingsModalScreen} options={{ presentation: 'modal' }} />
-                <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={{ presentation: 'card', headerBackTitle: 'Notifications', headerTitle: '', }} />
-                <Stack.Screen name="SigninScreen" component={SigninScreen} options={{ title: 'Sign In', headerShown: false }} />
-                <Stack.Screen name="SignupScreen" component={SignupScreen} options={{ title: 'Sign Up', headerShown: false }} />
-                <Stack.Screen name="SearchScreen" component={SearchScreen} options={{ title: 'Search' }} />
-                <Stack.Screen name="ProfileEditScreen" component={ProfileEditScreen} options={{ title: 'Edit Profile' }} />
-              </Stack.Navigator>
-            </Suspense>
-          </NavigationContainer>
-        </ThemeProvider>
-      </AuthProvider>
-    </ErrorBoundary>
+    <AuthProvider>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="settingsModal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="NotificationsScreen" options={{ presentation: 'card', headerBackTitle: 'Notifcations', headerTitle: '', }} />
+        <Stack.Screen name="SigninScreen" options={{ title: 'Sign In', headerShown: false }} />
+        <Stack.Screen name="SignupScreen" options={{ title: 'Sign Up', headerShown: false }} />
+        <Stack.Screen name="SearchScreen"  options={{ title: 'Search' }} /> 
+        <Stack.Screen name="ProfileEditScreen"options={{ title: 'Edit Profile' }} /> 
+      </Stack>
+    </ThemeProvider>
+    </AuthProvider>
   );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 import { ExternalLink } from './ExternalLink';
@@ -7,14 +7,13 @@ import { Text, View } from './Themed';
 
 import Colors from '@/constants/Colors';
 
-export default function HomeScreenInfo({ path }: { path: string }) {
-  return (
+const HomeScreenInfo = () => {
+    return (
     <View style={styles.getStartedContainer}>
-        <MonoText> Here</MonoText>
+        <MonoText> Here is the page we will add feed cards like twitter</MonoText>
     </View>
-
   );
-}
+};
 
 const styles = StyleSheet.create({
   getStartedContainer: {
@@ -44,3 +43,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default HomeScreenInfo;

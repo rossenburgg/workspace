@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Text, View } from './Themed';
 import Story from  'react-native-insta-story';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const data = [
   {
@@ -100,25 +101,28 @@ const data = [
 ];
 
 const StatusView = () => {
+    
   return (
-   
       <Story
        style={styles.container}
         data={data}
         duration={10}
         avatarSize={70}
-        unPressedBorderColor={'blue'}
+        unPressedBorderColor={'red'}
         pressedBorderColor={'gray'}
         swipeText='Swipe to see next story'
-        // renderCloseComponent={() => <Text>Close</Text>}
       />
 
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  gradient: {
+    width: '100%',
+    height: '100%',
   },
 });
 

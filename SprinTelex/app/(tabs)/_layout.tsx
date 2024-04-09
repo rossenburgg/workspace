@@ -1,13 +1,14 @@
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { AntDesign } from '@expo/vector-icons';
 import { Link, Tabs } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { Pressable, View, Image, Text } from 'react-native';
+import HubScreenStyles from '../../styles/HubScreenStyles'; // Import the styles
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useAuth } from '../context/AuthContext'; // Import useAuth hook
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof AntDesign>['name'];
@@ -16,11 +17,19 @@ function TabBarIcon(props: {
   return <AntDesign size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
+function TabBarHubIcon(props: {
+  name: React.ComponentProps<typeof AntDesign>['name'];
+  color: string;
+}) {
+  return <AntDesign size={28} style={{ marginBottom: -3 }} {...props} />;
+}
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const navigation = useNavigation();
+  const { user } = useAuth(); // Use the useAuth hook to access the current user data
 
   return (
+    
     <Tabs
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -50,21 +59,6 @@ export default function TabLayout() {
               </Pressable>
             </Link>
           ),
-          headerLeft: () => (
-            <Link href="/NotificationsScreen" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="reddit"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginLeft: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
-          
         }}
       />
       <Tabs.Screen
@@ -73,6 +67,39 @@ export default function TabLayout() {
           title: 'Reels',
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="camera" color={color} />
+          ),
+        }}
+      />
+        <Tabs.Screen
+        name="HubScreen"
+        options={{
+          title: 'Hub',
+          headerTitle: '',
+          tabBarIcon: ({ color }) => (
+            <TabBarHubIcon name="slack-square"  color={color} />
+          ),
+          headerRight: () => (
+            <Link href="/settingsModal" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="ellipsis-h"
+                    size={25}
+                    color={Colors[colorScheme ?? 'light'].text}
+                    style={[HubScreenStyles.headerRightIcon, { opacity: pressed ? 0.5 : 1 }]} 
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+          headerLeft: () => (
+            <View style={HubScreenStyles.headerLeftContainer}> 
+              <Image
+                source={{ uri: user?.profilePictureUrl || 'https://via.placeholder.com/150' }}
+                style={HubScreenStyles.profilePic} 
+              />
+              <Text style={HubScreenStyles.hubText}>Hub</Text> 
+            </View>
           ),
         }}
       />

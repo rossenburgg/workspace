@@ -43,11 +43,13 @@ const startServer = async () => {
     // Settings Routes
     app.use('/api/settings', settingsRoutes); // Use the settingsRoutes
 
+  
+
     // Example of using the authentication middleware
     // app.use('/api/protected', authMiddleware);  
 
     // Listen on port 3000
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 3000; // Changed port to 3001
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
